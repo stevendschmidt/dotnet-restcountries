@@ -1,0 +1,6 @@
+@DotNetRestCountries_HostAddress = http://localhost:5032
+
+GET {{DotNetRestCountries_HostAddress}}/countries/
+Accept: application/json
+
+###
