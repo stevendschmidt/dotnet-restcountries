@@ -1,13 +1,14 @@
 ﻿using DotNetRestCountries.Models;
-using DotNetRestCountries.Models.RestCountries;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using System.Text.Json;
 
 namespace DotNetRestCountries.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class CountriesController : ControllerBase
+    
+    public class CountriesController : ODataController
     {
         private readonly ILogger<CountriesController> _logger;
         public CountriesController(ILogger<CountriesController> logger)
@@ -16,12 +17,43 @@ namespace DotNetRestCountries.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Country>> GetAsync()
+        [EnableQuery]
+        [Route("api/countries")]
+        public async Task<ActionResult> GetAsync()
         {
             using HttpClient client = new();
             string jsonStrResult = await client.GetStringAsync("https://restcountries.com/v3.1/all");
-            IEnumerable<RcCountry> result = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
-            return null;
+            IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
+            var countries = rcCountries?
+                .Select(x => new 
+                {
+                    CommonName = x.Name?.Common,
+                    OfficialName = x.Name?.Official,
+                    x.Region
+                })
+                .OrderBy(x => x.CommonName);
+
+            return Ok(countries);
+        }
+
+        [HttpGet]
+        [EnableQuery]
+        [Route("api/countries/{code}")]
+        public async Task<ActionResult> GetAsync([FromRoute] string code)
+        {
+            using HttpClient client = new();
+            string jsonStrResult = await client.GetStringAsync($"https://restcountries.com/v3.1/alpha/{code}");
+            IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
+            var countries = rcCountries?
+                .Select(x => new 
+                {
+                    CommonName = x.Name?.Common,
+                    OfficialName = x.Name?.Official,
+                    x.Region
+                })
+                .OrderBy(x => x.CommonName);
+
+            return Ok(countries);
         }
     }
 }
