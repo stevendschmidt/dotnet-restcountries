@@ -6,20 +6,14 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 namespace DotNetRestCountries.Controllers
 {
     [ApiController]
-    public class RegionsController : ODataController
+    public class RegionsController(IDataService dataService) : ODataController
     {
-        private readonly IDataService _dataService;
-        public RegionsController(IDataService dataService)
-        {
-            _dataService = dataService;
-        }
-
         [HttpGet]
-        [EnableQuery(PageSize = 25)]
+        [EnableQuery]
         [Route("api/regions")]
         public async Task<IActionResult> GetAsync()
         {
-            var regions = await _dataService.GetAllRegionsAsync();
+            var regions = await dataService.GetAllRegionsAsync();
             return Ok(regions);
         }
     }

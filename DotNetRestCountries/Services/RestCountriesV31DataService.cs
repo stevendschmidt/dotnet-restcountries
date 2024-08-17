@@ -1,4 +1,5 @@
 ﻿using DotNetRestCountries.Models;
+using System.Collections.Generic;
 using System.Text.Json;
 
 namespace DotNetRestCountries.Services
@@ -10,9 +11,9 @@ namespace DotNetRestCountries.Services
         public async Task<IEnumerable<Country>> GetAllCountriesAsync()
         {
             using HttpClient client = httpClientFactory.CreateClient();
-            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population");
+            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population,languages");
             IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
-            var countries = rcCountries?
+            IEnumerable<Country>? countries = rcCountries?
                 .Select(x => new Country()
                 {
                     CommonName = x.Name!.Common,
@@ -34,7 +35,7 @@ namespace DotNetRestCountries.Services
             using HttpClient client = httpClientFactory.CreateClient();
             string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/alpha/{code}");
             IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
-            var countries = rcCountries?
+            IEnumerable<Country>? countries = rcCountries?
                 .Select(x => new Country()
                 {
                     CommonName = x.Name!.Common,
@@ -54,9 +55,9 @@ namespace DotNetRestCountries.Services
         public async Task<IEnumerable<Region>> GetAllRegionsAsync()
         {
             using HttpClient client = httpClientFactory.CreateClient();
-            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all");
+            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population,languages");
             IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
-            var regions = rcCountries?
+            IEnumerable<Region>? regions = rcCountries?
                 .GroupBy(x => x.Region)
                 .Select(x => new Region()
                 {
@@ -82,9 +83,9 @@ namespace DotNetRestCountries.Services
         public async Task<IEnumerable<Language>> GetAllLanguagesAsync()
         {
             using HttpClient client = httpClientFactory.CreateClient();
-            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all");
+            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population,languages");
             IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
-            var languages = rcCountries?
+            IEnumerable<Language>? languages = rcCountries?
                 .Where(x => x.Languages != null)
                 .SelectMany(x => x.Languages!.Values)
                 .Distinct()

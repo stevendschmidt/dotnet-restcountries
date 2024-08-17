@@ -7,20 +7,14 @@ namespace DotNetRestCountries.Controllers
 {
     [ApiController]
     
-    public class CountriesController : ODataController
+    public class CountriesController(IDataService dataService) : ODataController
     {
-        private readonly IDataService _dataService;
-        public CountriesController(IDataService dataService)
-        {
-            _dataService = dataService;
-        }
-
         [HttpGet]
         [EnableQuery(PageSize = 25)]
         [Route("api/countries")]
         public async Task<ActionResult> GetAsync()
         {
-            var countries = await _dataService.GetAllCountriesAsync();
+            var countries = await dataService.GetAllCountriesAsync();
             return Ok(countries);
         }
 
@@ -29,7 +23,7 @@ namespace DotNetRestCountries.Controllers
         [Route("api/countries/{code}")]
         public async Task<ActionResult> GetAsync([FromRoute] string code)
         {
-            var countries = await _dataService.GetCountriesByCodeAsync(code);
+            var countries = await dataService.GetCountriesByCodeAsync(code);
             return Ok(countries);
         }
     }
