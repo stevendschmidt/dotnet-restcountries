@@ -6,21 +6,21 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 namespace DotNetRestCountries.Controllers
 {
     [ApiController]
-    public class RegionsController : ODataController
+    public class LanguagesController : ODataController
     {
         private readonly IDataService _dataService;
-        public RegionsController(IDataService dataService)
+        public LanguagesController(IDataService dataService)
         {
             _dataService = dataService;
         }
 
         [HttpGet]
         [EnableQuery]
-        [Route("api/regions")]
+        [Route("api/languages")]
         public async Task<IActionResult> GetAsync()
         {
-            var regions = await _dataService.GetAllRegionsAsync();
-            return Ok(regions);
+            var languages = await _dataService.GetAllLanguagesAsync();
+            return Ok(languages);
         }
     }
 }

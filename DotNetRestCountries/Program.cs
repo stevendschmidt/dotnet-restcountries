@@ -1,3 +1,4 @@
+using DotNetRestCountries.Services;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 
@@ -13,6 +14,9 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Inject the data service
+builder.Services.AddSingleton<IDataService, RestCountriesV31DataService>();
 
 var app = builder.Build();
 

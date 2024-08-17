@@ -9,6 +9,9 @@ namespace DotNetRestCountries.Models
 
         [JsonPropertyName("region")]
         public string? Region { get; set; }
+
+        [JsonPropertyName("languages")]
+        public Dictionary<string, string>? Languages { get; set; }
     }
 
     public class Name

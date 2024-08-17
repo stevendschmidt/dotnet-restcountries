@@ -1,8 +1,7 @@
-﻿using DotNetRestCountries.Models;
+﻿using DotNetRestCountries.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using System.Text.Json;
 
 namespace DotNetRestCountries.Controllers
 {
@@ -10,10 +9,10 @@ namespace DotNetRestCountries.Controllers
     
     public class CountriesController : ODataController
     {
-        private readonly ILogger<CountriesController> _logger;
-        public CountriesController(ILogger<CountriesController> logger)
+        private readonly IDataService _dataService;
+        public CountriesController(IDataService dataService)
         {
-            _logger = logger;
+            _dataService = dataService;
         }
 
         [HttpGet]
@@ -21,18 +20,7 @@ namespace DotNetRestCountries.Controllers
         [Route("api/countries")]
         public async Task<ActionResult> GetAsync()
         {
-            using HttpClient client = new();
-            string jsonStrResult = await client.GetStringAsync("https://restcountries.com/v3.1/all");
-            IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
-            var countries = rcCountries?
-                .Select(x => new 
-                {
-                    CommonName = x.Name?.Common,
-                    OfficialName = x.Name?.Official,
-                    x.Region
-                })
-                .OrderBy(x => x.CommonName);
-
+            var countries = await _dataService.GetAllCountriesAsync();
             return Ok(countries);
         }
 
@@ -41,18 +29,7 @@ namespace DotNetRestCountries.Controllers
         [Route("api/countries/{code}")]
         public async Task<ActionResult> GetAsync([FromRoute] string code)
         {
-            using HttpClient client = new();
-            string jsonStrResult = await client.GetStringAsync($"https://restcountries.com/v3.1/alpha/{code}");
-            IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
-            var countries = rcCountries?
-                .Select(x => new 
-                {
-                    CommonName = x.Name?.Common,
-                    OfficialName = x.Name?.Official,
-                    x.Region
-                })
-                .OrderBy(x => x.CommonName);
-
+            var countries = await _dataService.GetCountriesByCodeAsync(code);
             return Ok(countries);
         }
     }
