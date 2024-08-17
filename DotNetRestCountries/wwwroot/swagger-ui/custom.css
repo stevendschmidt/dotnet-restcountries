@@ -1,0 +1,15 @@
+﻿body {
+	background-color: #f4f4f9 !important;
+}
+
+div.topbar {
+	background-color: #254550 !important;
+}
+
+h2, h3 {
+	color: #586f7c !important;
+}
+
+.opblock-summary-get > button > span.opblock-summary-method {
+	background-color: #235e6f !important;
+}
