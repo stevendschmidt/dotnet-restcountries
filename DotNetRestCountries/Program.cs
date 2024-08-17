@@ -1,8 +1,10 @@
 using DotNetRestCountries.Models;
 using DotNetRestCountries.Services;
 using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Routing.Conventions;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +17,12 @@ modelBuilder.EntitySet<Language>("languages");
 modelBuilder.EnableLowerCamelCase();
 
 builder.Services.AddControllers()
-    .AddOData(options => options.Select().Filter().OrderBy().Expand()
-        .Count().SetMaxTop(null).AddRouteComponents("api", modelBuilder.GetEdmModel()));
+    .AddOData(options => 
+    {
+        options.Conventions.Remove(options.Conventions.OfType<MetadataRoutingConvention>().First());
+        options.Select().Filter().OrderBy().Expand()
+            .Count().SetMaxTop(null).AddRouteComponents("api", modelBuilder.GetEdmModel());
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -28,6 +34,9 @@ builder.Services.AddSwaggerGen(options =>
         Title = "Dot Net REST Countries",
         Description = "An ASP.NET Core Web API that supports OData 4 and consumes the REST Countries API (www.restcountries.com)"
     });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 builder.Services.AddHttpClient();
