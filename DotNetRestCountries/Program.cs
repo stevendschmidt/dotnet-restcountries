@@ -1,3 +1,4 @@
+using DotNetRestCountries.Models;
 using DotNetRestCountries.Services;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
@@ -6,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var modelBuilder = new ODataConventionModelBuilder();
+
+modelBuilder.EntitySet<Country>("countries");
+modelBuilder.EntitySet<Region>("regions");
+modelBuilder.EntitySet<Language>("languages");
 
 builder.Services.AddControllers()
     .AddOData(options => options.Select().Filter().OrderBy().Expand()

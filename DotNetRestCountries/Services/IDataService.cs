@@ -1,10 +1,12 @@
-﻿namespace DotNetRestCountries.Services
+﻿using DotNetRestCountries.Models;
+
+namespace DotNetRestCountries.Services
 {
     public interface IDataService
     {
-        Task<object> GetAllCountriesAsync();
-        Task<object> GetCountriesByCodeAsync(string code);
-        Task<object> GetAllRegionsAsync();
-        Task<object> GetAllLanguagesAsync();
+        Task<IEnumerable<Country>> GetAllCountriesAsync();
+        Task<IEnumerable<Country>> GetCountriesByCodeAsync(string code);
+        Task<IEnumerable<Region>> GetAllRegionsAsync();
+        Task<IEnumerable<Language>> GetAllLanguagesAsync();
     }
 }

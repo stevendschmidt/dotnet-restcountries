@@ -19,6 +19,9 @@ namespace DotNetRestCountries.Models
         [JsonPropertyName("cca3")]
         public string? Cca3 { get; set; }
 
+        [JsonPropertyName("cioc")]
+        public string? Cioc { get; set; }
+
         [JsonPropertyName("independent")]
         public bool? Independent { get; set; }
 

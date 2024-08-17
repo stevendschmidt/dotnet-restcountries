@@ -16,7 +16,7 @@ namespace DotNetRestCountries.Controllers
         }
 
         [HttpGet]
-        [EnableQuery]
+        [EnableQuery(PageSize = 25)]
         [Route("api/countries")]
         public async Task<ActionResult> GetAsync()
         {
