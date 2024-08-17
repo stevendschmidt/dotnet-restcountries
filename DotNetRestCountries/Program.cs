@@ -11,6 +11,7 @@ var modelBuilder = new ODataConventionModelBuilder();
 modelBuilder.EntitySet<Country>("countries");
 modelBuilder.EntitySet<Region>("regions");
 modelBuilder.EntitySet<Language>("languages");
+modelBuilder.EnableLowerCamelCase();
 
 builder.Services.AddControllers()
     .AddOData(options => options.Select().Filter().OrderBy().Expand()
