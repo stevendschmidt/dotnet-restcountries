@@ -48,3 +48,5 @@ An interesting caching approach I used was to take the request path and use that
 I was pleased with the ease of use of Microsoft's OData and JSON libraries. Data from the REST Countries API is automatically deserialized field by field, as long as the data matches the model given. Implementing filtering, sorting, and other options was trivial since the OData system handles it for you.
 
 One improvement to make would be to pass the OData __select__ operation through to the underlying REST Countries API in order to select certain fields directly. The REST Countries API doesn't support most operations, but field selection is supported. Doing it this way would offload the field selection to the REST Countries API server side. OData's field selection would no longer be required, increasing performance and reducing bandwidth.
+
+Another improvement would be to include the OData system query options within the Swagger UI for convenience.
