@@ -2,6 +2,7 @@ using DotNetRestCountries.Models;
 using DotNetRestCountries.Services;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,15 @@ builder.Services.AddControllers()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Dot Net REST Countries",
+        Description = "An ASP.NET Core Web API that supports OData 4 and consumes the REST Countries API (www.restcountries.com)"
+    });
+});
 
 builder.Services.AddHttpClient();
 builder.Services.AddMemoryCache();
@@ -31,7 +40,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
-app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
+app.UseSwaggerUI(options => 
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
     options.RoutePrefix = string.Empty;
