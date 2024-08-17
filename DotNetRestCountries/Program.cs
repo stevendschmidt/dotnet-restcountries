@@ -21,6 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient();
+builder.Services.AddMemoryCache();
 
 // Inject the data service
 builder.Services.AddSingleton<IDataService, RestCountriesV31DataService>();

@@ -1,18 +1,17 @@
 ﻿using DotNetRestCountries.Models;
-using System.Collections.Generic;
+using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
 
 namespace DotNetRestCountries.Services
 {
-    public class RestCountriesV31DataService(IHttpClientFactory httpClientFactory) : IDataService
+    public class RestCountriesV31DataService(IHttpClientFactory httpClientFactory, IMemoryCache memoryCache) : IDataService
     {
         private const string BaseUrl = "https://restcountries.com/v3.1";
 
         public async Task<IEnumerable<Country>> GetAllCountriesAsync()
         {
-            using HttpClient client = httpClientFactory.CreateClient();
-            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population,languages");
-            IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
+            string request = "/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population,languages";
+            IEnumerable<RcCountry>? rcCountries = await GetCachedCountriesAsync(request);
             IEnumerable<Country>? countries = rcCountries?
                 .Select(x => new Country()
                 {
@@ -32,9 +31,8 @@ namespace DotNetRestCountries.Services
 
         public async Task<IEnumerable<Country>> GetCountriesByCodeAsync(string code)
         {
-            using HttpClient client = httpClientFactory.CreateClient();
-            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/alpha/{code}");
-            IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
+            string request = $"/alpha/{code}";
+            IEnumerable<RcCountry>? rcCountries = await GetCachedCountriesAsync(request);
             IEnumerable<Country>? countries = rcCountries?
                 .Select(x => new Country()
                 {
@@ -54,9 +52,8 @@ namespace DotNetRestCountries.Services
 
         public async Task<IEnumerable<Region>> GetAllRegionsAsync()
         {
-            using HttpClient client = httpClientFactory.CreateClient();
-            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population,languages");
-            IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
+            string request = "/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population,languages";
+            IEnumerable<RcCountry>? rcCountries = await GetCachedCountriesAsync(request);
             IEnumerable<Region>? regions = rcCountries?
                 .GroupBy(x => x.Region)
                 .Select(x => new Region()
@@ -82,9 +79,8 @@ namespace DotNetRestCountries.Services
 
         public async Task<IEnumerable<Language>> GetAllLanguagesAsync()
         {
-            using HttpClient client = httpClientFactory.CreateClient();
-            string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population,languages");
-            IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
+            string request = "/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population,languages";
+            IEnumerable<RcCountry>? rcCountries = await GetCachedCountriesAsync(request);
             IEnumerable<Language>? languages = rcCountries?
                 .Where(x => x.Languages != null)
                 .SelectMany(x => x.Languages!.Values)
@@ -111,6 +107,23 @@ namespace DotNetRestCountries.Services
                 })
                 .OrderBy(x => x.Name);
             return languages!;
+        }
+
+        private async Task<IEnumerable<RcCountry>> GetCachedCountriesAsync(string request)
+        {
+            using HttpClient client = httpClientFactory.CreateClient();
+
+            string? jsonStrResult = await memoryCache.GetOrCreateAsync(
+                request,
+                cacheEntry =>
+                {
+                    cacheEntry.SlidingExpiration = TimeSpan.FromSeconds(3);
+                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20);
+                    return client.GetStringAsync($"{BaseUrl}{request}");
+                });
+            IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult!);
+
+            return rcCountries!;
         }
     }
 }
