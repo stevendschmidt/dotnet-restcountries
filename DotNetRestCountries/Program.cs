@@ -20,6 +20,8 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpClient();
+
 // Inject the data service
 builder.Services.AddSingleton<IDataService, RestCountriesV31DataService>();
 

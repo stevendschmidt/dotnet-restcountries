@@ -3,12 +3,13 @@ using System.Text.Json;
 
 namespace DotNetRestCountries.Services
 {
-    public class RestCountriesV31DataService : IDataService
+    public class RestCountriesV31DataService(IHttpClientFactory httpClientFactory) : IDataService
     {
         private const string BaseUrl = "https://restcountries.com/v3.1";
+
         public async Task<IEnumerable<Country>> GetAllCountriesAsync()
         {
-            using HttpClient client = new();
+            using HttpClient client = httpClientFactory.CreateClient();
             string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all?fields=name,capital,region,cca2,ccn3,cca3,cioc,population");
             IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
             var countries = rcCountries?
@@ -30,7 +31,7 @@ namespace DotNetRestCountries.Services
 
         public async Task<IEnumerable<Country>> GetCountriesByCodeAsync(string code)
         {
-            using HttpClient client = new();
+            using HttpClient client = httpClientFactory.CreateClient();
             string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/alpha/{code}");
             IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
             var countries = rcCountries?
@@ -52,7 +53,7 @@ namespace DotNetRestCountries.Services
 
         public async Task<IEnumerable<Region>> GetAllRegionsAsync()
         {
-            using HttpClient client = new();
+            using HttpClient client = httpClientFactory.CreateClient();
             string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all");
             IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
             var regions = rcCountries?
@@ -80,7 +81,7 @@ namespace DotNetRestCountries.Services
 
         public async Task<IEnumerable<Language>> GetAllLanguagesAsync()
         {
-            using HttpClient client = new();
+            using HttpClient client = httpClientFactory.CreateClient();
             string jsonStrResult = await client.GetStringAsync($"{BaseUrl}/all");
             IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult);
             var languages = rcCountries?
