@@ -97,6 +97,13 @@ namespace DotNetRestCountries.Services
                         {
                             CommonName = y.Name!.Common,
                             OfficialName = y.Name!.Official,
+                            Capitals = y.Capital,
+                            Region = y.Region,
+                            Cca2 = y.Cca2,
+                            Ccn3 = y.Ccn3,
+                            Cca3 = y.Cca3,
+                            Cioc = y.Cioc,
+                            Population = y.Population
                         })
                         .OrderBy(x => x.CommonName)
                 })

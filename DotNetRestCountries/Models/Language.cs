@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.OData.ModelBuilder;
+using System.ComponentModel.DataAnnotations;
 
 namespace DotNetRestCountries.Models
 {
@@ -6,6 +7,8 @@ namespace DotNetRestCountries.Models
     {
         [Key]
         public string? Name { get; set; }
+
+        [AutoExpand]
         public IEnumerable<Country>? Countries { get; set; }
     }
 }
