@@ -122,7 +122,6 @@ namespace DotNetRestCountries.Services
                     return client.GetStringAsync($"{BaseUrl}{request}");
                 });
             IEnumerable<RcCountry>? rcCountries = JsonSerializer.Deserialize<IEnumerable<RcCountry>>(jsonStrResult!);
-
             return rcCountries!;
         }
     }
