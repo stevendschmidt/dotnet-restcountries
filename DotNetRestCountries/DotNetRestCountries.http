@@ -1,6 +1,18 @@
-@DotNetRestCountries_HostAddress = http://localhost:5032
+@DotNetRestCountries_HostAddress = https://localhost:7100
 
-GET {{DotNetRestCountries_HostAddress}}/countries/
-Accept: application/json
+
+GET {{DotNetRestCountries_HostAddress}}/api/countries
+
+###
+
+GET {{DotNetRestCountries_HostAddress}}/api/countries/{code}
+
+###
+
+GET {{DotNetRestCountries_HostAddress}}/api/languages
+
+###
+
+GET {{DotNetRestCountries_HostAddress}}/api/regions
 
 ###
